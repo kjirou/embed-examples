@@ -30,9 +30,7 @@ interface ExampleSourcesMap {
 function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourcesMap {
   const examples: ExampleSourcesMap = {};
   directions.forEach(direction => {
-    const source = fs.readFileSync(path.join(basePath, direction.filePath)).toString();
-    // TODO: Handle a failure to read
-    examples[direction.filePath] = source;
+    examples[direction.filePath] = fs.readFileSync(path.join(basePath, direction.filePath)).toString();
   });
   return examples;
 }
@@ -80,28 +78,17 @@ function embedExamplesIntoReadme(
   return newReadmeText;
 }
 
-export interface ExecutionResult {
-  exitCode: number,
-  output: string,
-  outputErrorMessage: string,
-}
-
 export function execute(
   readmeText: string,
   moduleName: string,
   mainModuleIdUsedInExample: string,
   examplesDirPath: string
-): ExecutionResult {
+): string {
   const directions = searchEmbeddingDirections(readmeText);
   const exampleSourcesMap = replaceToPublicModuleId(
     fetchExamples(examplesDirPath, directions),
     mainModuleIdUsedInExample,
     moduleName
   );
-  const embeddedReadmeText = embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap);
-  return {
-    exitCode: 0,
-    output: embeddedReadmeText,
-    outputErrorMessage: '',
-  };
+  return embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap);
 };
