@@ -34,7 +34,8 @@ const [
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
 const readmeText = fs.readFileSync(readmeFilePath).toString();
 
-const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
+const examplesDirPath = parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
+  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
 
 const output = embedExamples.execute(readmeText, moduleName, mainModuleIdUsedInExample, examplesDirPath);
 process.stdout.write(output);
