@@ -8,7 +8,7 @@ const path = require('path');
 // 5) .jsリストがREADMEでどの位置にあるかを探し出してそれぞれ挿入する
 // 6) 置換されたREADMEを標準出力
 
-export interface EmbeddingDirection {
+interface EmbeddingDirection {
   directionStartIndex: number,
   directionEndIndex: number,
   filePath: string,
@@ -40,7 +40,7 @@ function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
   return directions;
 }
 
-export interface ExampleSourceMap {
+interface ExampleSourceMap {
   [filePath: string]: string,
 }
 
