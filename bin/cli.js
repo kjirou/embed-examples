@@ -73,7 +73,12 @@ const replacementKeywords = replacementQueries.map(replacementQuery => {
   };
 });
 
-const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords);
+const newlineCharacter = parsedArgv['newline-character'];
+if (['LF', 'CR', 'CRLF'].indexOf(newlineCharacter) === -1) {
+  exitWithErrorMessage('The "--newline-character" option requires one of ["LF", "CR", "CRLF"].');
+}
+
+const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords, newlineCharacter);
 
 if (parsedArgv.overwrite) {
   fs.writeFileSync(readmeFilePath, output);

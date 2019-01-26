@@ -12,7 +12,7 @@ describe('index', function() {
       describe('When there is one direction', function() {
         it('can embed an example', function() {
           assert.strictEqual(
-            execute('<!-- embed-examples: foo.js -->', examplesDirPath, []),
+            execute('<!-- embed-examples: foo.js -->', examplesDirPath, [], 'LF'),
             [
               "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
               "const foo = require('../index');",
@@ -22,8 +22,8 @@ describe('index', function() {
         });
 
         it('should not change when replacing continuously', function() {
-          const first = execute('<!-- embed-examples: foo.js -->', examplesDirPath, []);
-          const second = execute(first, examplesDirPath, []);
+          const first = execute('<!-- embed-examples: foo.js -->', examplesDirPath, [], 'LF');
+          const second = execute(first, examplesDirPath, [], 'LF');
           assert.strictEqual(first, second);
         });
 
@@ -32,13 +32,30 @@ describe('index', function() {
             execute(
               '<!-- embed-examples: foo.js -->',
               examplesDirPath,
-              [{from: '../index', to: 'foo'}]
+              [{from: '../index', to: 'foo'}],
+              'LF'
             ),
             [
               "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
               "const foo = require('foo');",
               "```<!-- /embedded-example -->",
             ].join('\n')
+          );
+        });
+
+        it('can change newline characters', function() {
+          assert.strictEqual(
+            execute(
+              '<!-- embed-examples: foo.js -->',
+              examplesDirPath,
+              [],
+              'CR'
+            ),
+            [
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->```\r",
+              "const foo = require('../index');\n",
+              "```<!-- /embedded-example -->",
+            ].join('')
           );
         });
       });
@@ -49,7 +66,8 @@ describe('index', function() {
             execute(
               '<!-- embed-examples: foo.js --><!-- embed-examples: bar.js -->',
               examplesDirPath,
-              []
+              [],
+              'LF'
             ),
             [
               "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
@@ -67,7 +85,7 @@ describe('index', function() {
       describe('When there are no directions', function() {
         it('should not replace the text', function() {
           const text = '# h1'
-          assert.strictEqual(execute(text, examplesDirPath, []), text);
+          assert.strictEqual(execute(text, examplesDirPath, [], 'LF'), text);
         });
       });
 
@@ -75,14 +93,14 @@ describe('index', function() {
         describe('When "embed-examples:" does not exist', function() {
           it('should not replace the text', function() {
             const text = '<!-- foo.js -->';
-            assert.strictEqual(execute(text, examplesDirPath, []), text);
+            assert.strictEqual(execute(text, examplesDirPath, [], 'LF'), text);
           });
         });
 
         describe('When describing an example that does not exist', function() {
           it('should not replace the text', function() {
             const text = '<!-- embed-example: fooo.js -->';
-            assert.strictEqual(execute(text, examplesDirPath, []), text);
+            assert.strictEqual(execute(text, examplesDirPath, [], 'LF'), text);
           });
         });
       });
