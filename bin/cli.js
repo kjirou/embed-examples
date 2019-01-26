@@ -36,7 +36,9 @@ const [
   relativeReadmeFilePath = '',
 ] = parsedArgv._;
 
-// TODO: Validate args
+if (!relativeReadmeFilePath) {
+  exitWithErrorMessage('The path of "README.md" is necessary.');
+}
 
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
 const readmeText = fs.readFileSync(readmeFilePath).toString();
