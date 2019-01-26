@@ -11,30 +11,20 @@ const path = require('path');
 interface EmbeddingDirection {
   directionStartIndex: number,
   directionEndIndex: number,
+  directionBody: string,
   filePath: string,
-  hasEmbeddedExample: boolean,
-  embeddedExampleStartIndex: number,
-  embeddedExampleEndIndex: number,
 }
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
-  const regExp = /<!-- *embed-examples: *(.+?) *-->(```(.+?)```)?/g;
+  const regExp = /(<!-- *embed-examples: *(.+?) *-->)(?:<!-- embedded-example -->```.+?```<!-- \/embedded-example -->)?/g;
   const directions = [];
   let matched;
   while (matched = regExp.exec(readmeText)) {
-    const directionEndIndex = regExp.lastIndex - 1;
-    const embeddedExample = matched[2] || '';
-    const hasEmbeddedExample = Boolean(embeddedExample);
-    const embeddedExampleStartIndex = hasEmbeddedExample ? directionEndIndex + 1 : 0;
-    const embeddedExampleEndIndex = hasEmbeddedExample ? embeddedExampleStartIndex + embeddedExample.length - 1 : 0;
-
     directions.push({
       directionStartIndex: matched.index,
-      directionEndIndex,
-      filePath: matched[1],
-      hasEmbeddedExample,
-      embeddedExampleStartIndex,
-      embeddedExampleEndIndex,
+      directionEndIndex: regExp.lastIndex - 1,
+      directionBody: matched[1],
+      filePath: matched[2],
     });
   }
   return directions;
@@ -89,14 +79,10 @@ function embedExamplesIntoReadme(
     directions.slice().sort((a, b) => b.directionStartIndex - a.directionStartIndex);
   let newReadmeText = readmeText;
   directionsOrderdFromTail.forEach(direction => {
-    const code = '```\n' + examples[direction.filePath] + '```\n';
-    newReadmeText = direction.hasEmbeddedExample
-      ? newReadmeText.slice(0, direction.directionEndIndex) +
-        code +
-        newReadmeText.slice(direction.embeddedExampleEndIndex + 1)
-      : newReadmeText.slice(0, direction.directionEndIndex) +
-        code +
-        newReadmeText.slice(direction.directionEndIndex + 1);
+    newReadmeText = newReadmeText.slice(0, direction.directionStartIndex) +
+      direction.directionBody +
+      '<!-- embedded-example -->```\n' + examples[direction.filePath] + '```<!-- embedded-example -->' +
+      newReadmeText.slice(direction.directionEndIndex + 1);
   });
   return newReadmeText;
 }
