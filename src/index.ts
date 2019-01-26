@@ -80,6 +80,27 @@ function replaceToPublicModuleId(
   return examples;
 }
 
+function embedExamplesIntoReadme(
+  readmeText: string,
+  directions: EmbeddingDirection[],
+  examples: ExampleSourceMap,
+): string {
+  const directionsOrderdFromTail =
+    directions.slice().sort((a, b) => b.directionStartIndex - a.directionStartIndex);
+  let newReadmeText = readmeText;
+  directionsOrderdFromTail.forEach(direction => {
+    const code = '```\n' + examples[direction.filePath] + '```\n';
+    newReadmeText = direction.hasEmbeddedExample
+      ? newReadmeText.slice(0, direction.directionEndIndex) +
+        code +
+        newReadmeText.slice(direction.embeddedExampleEndIndex + 1)
+      : newReadmeText.slice(0, direction.directionEndIndex) +
+        code +
+        newReadmeText.slice(direction.directionEndIndex + 1);
+  });
+  return newReadmeText;
+}
+
 export interface ExecutionResult {
   exitCode: number,
   outputErrorMessage: string,
@@ -93,14 +114,14 @@ export function execute(
 ): Promise<ExecutionResult> {
   const readmeText = fs.readFileSync(readmeFilePath).toString();
   // TODO: Handle a failure to read
-  const reversedDirections = searchEmbeddingDirections(readmeText).reverse();
-  console.log(reversedDirections);
+  const directions = searchEmbeddingDirections(readmeText);
   const exampleSourceMap = replaceToPublicModuleId(
-    fetchExamples(examplesDirPath, reversedDirections),
+    fetchExamples(examplesDirPath, directions),
     mainModuleIdUsedInExample,
     moduleName
   );
-  console.log(exampleSourceMap);
+  const embeddedReadmeText = embedExamplesIntoReadme(readmeText, directions, exampleSourceMap);
+  console.log(embeddedReadmeText);
 
   return Promise.resolve()
     .then(() => {
