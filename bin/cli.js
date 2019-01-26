@@ -15,18 +15,25 @@ if (fs.existsSync(path.join(__dirname, '../dist/index.js'))) {
 
 const cwd = process.cwd();
 
-const parsedArgv = minimist(process.argv.slice(2));
+const parsedArgv = minimist(process.argv.slice(2), {
+  default: {
+    'examples-dir': null,
+  },
+  alias: {
+    e: 'examples-dir',
+  },
+});
 const [
   moduleName = '',
   mainModuleIdUsedInExample = '',
   relativeReadmeFilePath = '',
-  relativeExamplesDirPath = '',
 ] = parsedArgv._;
 
 // TODO: Validate args
 
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
-const examplesDirPath = path.join(cwd, relativeExamplesDirPath);
+
+const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
 
 embedExamples.execute(moduleName, mainModuleIdUsedInExample, readmeFilePath, examplesDirPath)
   .then(results => {
