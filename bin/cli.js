@@ -14,7 +14,9 @@ if (fs.existsSync(path.join(__dirname, '../dist/index.js'))) {
 }
 
 function exitWithErrorMessage(message) {
-  process.stderr.write(message + '\n');
+  const ansiEscapeColorRed = '\x1b[31m';
+  const ansiEscapeColorReset = '\x1b[0m';
+  process.stderr.write(`${ansiEscapeColorRed}${message}${ansiEscapeColorReset}\n`);
   process.exit(1);
 }
 
