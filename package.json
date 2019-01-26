@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "description": "Embed examples/*.js into the README.md",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "$(npm bin)/tsc --project ./tsconfigs/build.json",
-    "test": "$(npm bin)/mocha --require './setup/ts-node-reigister-for-test.js' './test/**/*.ts'"
+    "test": "$(npm bin)/mocha --require './setup/ts-node-reigister-for-test.js' './test/**/*-test.ts'",
+    "typecheck": "$(npm bin)/tsc --project ./tsconfigs/test.json"
   },
   "repository": {
     "type": "git",
@@ -30,5 +32,8 @@
     "mocha": "^5.2.0",
     "ts-node": "^8.0.2",
     "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0"
   }
 }
