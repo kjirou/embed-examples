@@ -23,12 +23,12 @@ function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
   return directions;
 }
 
-interface ExampleSourceMap {
+interface ExampleSourcesMap {
   [filePath: string]: string,
 }
 
-function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourceMap {
-  const examples: ExampleSourceMap = {};
+function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourcesMap {
+  const examples: ExampleSourcesMap = {};
   directions.forEach(direction => {
     const source = fs.readFileSync(path.join(basePath, direction.filePath)).toString();
     // TODO: Handle a failure to read
@@ -45,10 +45,10 @@ function escapeRegExp(input: string): string {
 }
 
 function replaceToPublicModuleId(
-  examples: ExampleSourceMap,
+  examples: ExampleSourcesMap,
   mainModuleIdUsedInExample: string,
   moduleName: string
-): ExampleSourceMap {
+): ExampleSourcesMap {
   Object.keys(examples).forEach(key => {
     ["'", '"', '`'].forEach(quote => {
       examples[key] = examples[key].replace(
@@ -66,7 +66,7 @@ function replaceToPublicModuleId(
 function embedExamplesIntoReadme(
   readmeText: string,
   directions: EmbeddingDirection[],
-  examples: ExampleSourceMap,
+  examples: ExampleSourcesMap,
 ): string {
   const directionsOrderdFromTail =
     directions.slice().sort((a, b) => b.directionStartIndex - a.directionStartIndex);
@@ -93,12 +93,12 @@ export function execute(
   examplesDirPath: string
 ): ExecutionResult {
   const directions = searchEmbeddingDirections(readmeText);
-  const exampleSourceMap = replaceToPublicModuleId(
+  const exampleSourcesMap = replaceToPublicModuleId(
     fetchExamples(examplesDirPath, directions),
     mainModuleIdUsedInExample,
     moduleName
   );
-  const embeddedReadmeText = embedExamplesIntoReadme(readmeText, directions, exampleSourceMap);
+  const embeddedReadmeText = embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap);
   return {
     exitCode: 0,
     output: embeddedReadmeText,
