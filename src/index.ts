@@ -87,13 +87,11 @@ export interface ExecutionResult {
 }
 
 export function execute(
+  readmeText: string,
   moduleName: string,
   mainModuleIdUsedInExample: string,
-  readmeFilePath: string,
   examplesDirPath: string
 ): ExecutionResult {
-  const readmeText = fs.readFileSync(readmeFilePath).toString();
-  // TODO: Handle a failure to read
   const directions = searchEmbeddingDirections(readmeText);
   const exampleSourceMap = replaceToPublicModuleId(
     fetchExamples(examplesDirPath, directions),

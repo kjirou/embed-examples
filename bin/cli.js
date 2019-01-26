@@ -32,10 +32,12 @@ const [
 // TODO: Validate args
 
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
+// TODO: Handle a failure to read
+const readmeText = fs.readFileSync(readmeFilePath).toString();
 
 const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
 
-const result = embedExamples.execute(moduleName, mainModuleIdUsedInExample, readmeFilePath, examplesDirPath);
+const result = embedExamples.execute(readmeText, moduleName, mainModuleIdUsedInExample, examplesDirPath);
 if (result.exitCode > 0) {
   process.stderr.write(`${result.outputErrorMessage}\n`);
 } else {
