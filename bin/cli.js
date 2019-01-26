@@ -19,16 +19,16 @@ const parsedArgv = minimist(process.argv.slice(2));
 const [
   moduleName = '',
   mainModuleIdUsedInExample = '',
-  relativeInputDirPath = '',
-  relativeOutputFilePath = '',
+  relativeReadmeFilePath = '',
+  relativeExamplesDirPath = '',
 ] = parsedArgv._;
 
 // TODO: Validate args
 
-const inputDirPath = path.join(cwd, relativeInputDirPath);
-const outputFilePath = path.join(cwd, relativeOutputFilePath);
+const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
+const examplesDirPath = path.join(cwd, relativeExamplesDirPath);
 
-embedExamples.execute(moduleName, mainModuleIdUsedInExample, inputDirPath, outputFilePath)
+embedExamples.execute(moduleName, mainModuleIdUsedInExample, readmeFilePath, examplesDirPath)
   .then(results => {
     if (results.exitCode > 0) {
       process.stdout.write(`${results.outputErrorMessage}\n`);

@@ -13,8 +13,8 @@ export interface ExecutionResult {
 export function execute(
   moduleName: string,
   mainModuleIdUsedInExample: string,
-  inputDirPath: string,
-  outputFilePath: string
+  readmeFilePath: string,
+  examplesDirPath: string
 ): Promise<ExecutionResult> {
   return Promise.resolve()
     .then(() => {
