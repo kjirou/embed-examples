@@ -1,6 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
+//
+// TODO:
+// - `--overwrite` option
+// - `--newline-character` option
+//
+
 const EMBEDDED_EXAMPLE_START_TAG = '<!-- embedded-example -->';
 const EMBEDDED_EXAMPLE_END_TAG = '<!-- /embedded-example -->';
 
