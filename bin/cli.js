@@ -19,16 +19,16 @@ const parsedArgv = minimist(process.argv.slice(2), {
   default: {
     'examples-dir': null,
     overwrite: false,
+    replacement: null,
   },
   alias: {
     e: 'examples-dir',
     o: 'overwrite',
+    r: 'replacement',
   },
 });
 const [
   relativeReadmeFilePath = '',
-  moduleName = '',
-  mainModuleIdUsedInExample = '',
 ] = parsedArgv._;
 
 // TODO: Validate args
@@ -39,7 +39,24 @@ const readmeText = fs.readFileSync(readmeFilePath).toString();
 const examplesDirPath = parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
   ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
 
-const output = embedExamples.execute(readmeText, moduleName, mainModuleIdUsedInExample, examplesDirPath);
+const replacementQueries = parsedArgv.replacement instanceof Array
+  ? parsedArgv.replacement
+  : typeof parsedArgv.replacement === 'string'
+    ? [parsedArgv.replacement]
+    : [];
+const replacementKeywords = replacementQueries.map(replacementQuery => {
+  // TODO: Validate "from,to" format
+  const [from, to] = replacementQuery.split(',');
+  return {
+    from,
+    to,
+  };
+});
+
+parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
+  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
+
+const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords);
 
 if (parsedArgv.overwrite) {
   fs.writeFileSync(readmeFilePath, output);

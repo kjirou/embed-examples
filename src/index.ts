@@ -21,7 +21,7 @@ interface EmbeddingDirection {
   directionEndIndex: number,
   directionBody: string,
   filePath: string,
-}
+};
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
   const regExp = new RegExp(
@@ -48,7 +48,7 @@ function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
 
 interface ExampleSourcesMap {
   [filePath: string]: string,
-}
+};
 
 function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourcesMap {
   const examples: ExampleSourcesMap = {};
@@ -58,23 +58,27 @@ function fetchExamples(basePath: string, directions: EmbeddingDirection[]): Exam
   return examples;
 }
 
-function replaceToPublicModuleId(
+interface ReplacementKeyword {
+  from: string,
+  to: string,
+};
+
+function replaceKeywords(
   examples: ExampleSourcesMap,
-  mainModuleIdUsedInExample: string,
-  moduleName: string
+  replacementKeywords: ReplacementKeyword[],
 ): ExampleSourcesMap {
+  const newExamples: ExampleSourcesMap = {};
   Object.keys(examples).forEach(key => {
-    ["'", '"', '`'].forEach(quote => {
-      examples[key] = examples[key].replace(
-        new RegExp(
-          `${quote}${escapeRegExp(mainModuleIdUsedInExample)}${quote}`,
-          'g'
-        ),
-        `${quote}${moduleName}${quote}`
+    let source = examples[key];
+    replacementKeywords.forEach(replacement => {
+      source = source.replace(
+        new RegExp(escapeRegExp(replacement.from), 'g'),
+        replacement.to
       );
     });
+    newExamples[key] = source;
   });
-  return examples;
+  return newExamples;
 }
 
 function embedExamplesIntoReadme(
@@ -96,15 +100,13 @@ function embedExamplesIntoReadme(
 
 export function execute(
   readmeText: string,
-  moduleName: string,
-  mainModuleIdUsedInExample: string,
-  examplesDirPath: string
+  examplesDirPath: string,
+  replacementKeywords: ReplacementKeyword[],
 ): string {
   const directions = searchEmbeddingDirections(readmeText);
-  const exampleSourcesMap = replaceToPublicModuleId(
+  const exampleSourcesMap = replaceKeywords(
     fetchExamples(examplesDirPath, directions),
-    mainModuleIdUsedInExample,
-    moduleName
+    replacementKeywords
   );
   return embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap);
 };
