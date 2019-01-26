@@ -1,6 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
+const EMBEDDED_EXAMPLE_START_TAG = '<!-- embedded-example -->';
+const EMBEDDED_EXAMPLE_END_TAG = '<!-- /embedded-example -->';
+
+/**
+ * Copied from: https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions
+ */
+function escapeRegExp(input: string): string {
+  return input.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&');
+}
+
 interface EmbeddingDirection {
   directionStartIndex: number,
   directionEndIndex: number,
@@ -9,7 +19,15 @@ interface EmbeddingDirection {
 }
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
-  const regExp = /(<!-- *embed-examples: *(.+?) *-->)(?:<!-- embedded-example -->```(?:\r\n|[\n\r]|.)+?```<!-- \/embedded-example -->)?/g;
+  const regExp = new RegExp(
+    [
+      '(<!-- *embed-examples: *(.+?) *-->)',
+      '(?:',
+      escapeRegExp(EMBEDDED_EXAMPLE_START_TAG) + '```(?:\r\n|[\n\r]|.)+?```' + escapeRegExp(EMBEDDED_EXAMPLE_END_TAG),
+      ')?',
+    ].join(''),
+    'g'
+  );
   const directions = [];
   let matched;
   while (matched = regExp.exec(readmeText)) {
@@ -33,13 +51,6 @@ function fetchExamples(basePath: string, directions: EmbeddingDirection[]): Exam
     examples[direction.filePath] = fs.readFileSync(path.join(basePath, direction.filePath)).toString();
   });
   return examples;
-}
-
-/**
- * Copied from: https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions
- */
-function escapeRegExp(input: string): string {
-  return input.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&');
 }
 
 function replaceToPublicModuleId(
@@ -72,7 +83,7 @@ function embedExamplesIntoReadme(
   directionsOrderdFromTail.forEach(direction => {
     newReadmeText = newReadmeText.slice(0, direction.directionStartIndex) +
       direction.directionBody +
-      '<!-- embedded-example -->```\n' + examples[direction.filePath] + '```<!-- /embedded-example -->' +
+      EMBEDDED_EXAMPLE_START_TAG + '```\n' + examples[direction.filePath] + '```' + EMBEDDED_EXAMPLE_END_TAG +
       newReadmeText.slice(direction.directionEndIndex + 1);
   });
   return newReadmeText;
