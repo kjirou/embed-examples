@@ -40,6 +40,21 @@ function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
   return directions;
 }
 
+export interface ExampleSourceMap {
+  [filePath: string]: string,
+}
+
+function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourceMap {
+  const examples: ExampleSourceMap = {};
+  directions.forEach(direction => {
+    const absoluteFilePath = path.join(path.dirname(basePath), direction.filePath);
+    const source = fs.readFileSync(absoluteFilePath).toString();
+    // TODO: Handle a failure to read
+    examples[direction.filePath] = source;
+  });
+  return examples;
+}
+
 export interface ExecutionResult {
   exitCode: number,
   outputErrorMessage: string,
@@ -53,19 +68,10 @@ export function execute(
 ): Promise<ExecutionResult> {
   const readmeText = fs.readFileSync(readmeFilePath).toString();
   // TODO: Handle a failure to read
-  const directions = searchEmbeddingDirections(readmeText);
-  console.log(directions);
-
-  const examples = directions.slice().reverse().map(direction => {
-    const absoluteFilePath = path.join(path.dirname(readmeFilePath), direction.filePath);
-    const source = fs.readFileSync(absoluteFilePath).toString();
-    // TODO: Handle a failure to read
-    return {
-      filePath: direction.filePath,
-      source,
-    };
-  });
-  console.log(examples);
+  const reversedDirections = searchEmbeddingDirections(readmeText).reverse();
+  console.log(reversedDirections);
+  const exampleSourceMap = fetchExamples(readmeFilePath, reversedDirections);
+  console.log(exampleSourceMap);
 
   return Promise.resolve()
     .then(() => {
