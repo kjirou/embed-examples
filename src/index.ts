@@ -47,8 +47,7 @@ export interface ExampleSourceMap {
 function fetchExamples(basePath: string, directions: EmbeddingDirection[]): ExampleSourceMap {
   const examples: ExampleSourceMap = {};
   directions.forEach(direction => {
-    const absoluteFilePath = path.join(path.dirname(basePath), direction.filePath);
-    const source = fs.readFileSync(absoluteFilePath).toString();
+    const source = fs.readFileSync(path.join(basePath, direction.filePath)).toString();
     // TODO: Handle a failure to read
     examples[direction.filePath] = source;
   });
@@ -70,7 +69,7 @@ export function execute(
   // TODO: Handle a failure to read
   const reversedDirections = searchEmbeddingDirections(readmeText).reverse();
   console.log(reversedDirections);
-  const exampleSourceMap = fetchExamples(readmeFilePath, reversedDirections);
+  const exampleSourceMap = fetchExamples(examplesDirPath, reversedDirections);
   console.log(exampleSourceMap);
 
   return Promise.resolve()
