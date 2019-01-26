@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 const EMBEDDED_EXAMPLE_START_TAG = '<!-- embedded-example -->';
 const EMBEDDED_EXAMPLE_END_TAG = '<!-- /embedded-example -->';
