@@ -9,7 +9,7 @@ interface EmbeddingDirection {
 }
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
-  const regExp = /(<!-- *embed-examples: *(.+?) *-->)(?:<!-- embedded-example -->```.+?```<!-- \/embedded-example -->)?/g;
+  const regExp = /(<!-- *embed-examples: *(.+?) *-->)(?:<!-- embedded-example -->```(?:\r\n|[\n\r]|.)+?```<!-- \/embedded-example -->)?/g;
   const directions = [];
   let matched;
   while (matched = regExp.exec(readmeText)) {
@@ -74,7 +74,7 @@ function embedExamplesIntoReadme(
   directionsOrderdFromTail.forEach(direction => {
     newReadmeText = newReadmeText.slice(0, direction.directionStartIndex) +
       direction.directionBody +
-      '<!-- embedded-example -->```\n' + examples[direction.filePath] + '```<!-- embedded-example -->' +
+      '<!-- embedded-example -->```\n' + examples[direction.filePath] + '```<!-- /embedded-example -->' +
       newReadmeText.slice(direction.directionEndIndex + 1);
   });
   return newReadmeText;
