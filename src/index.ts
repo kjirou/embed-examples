@@ -11,17 +11,29 @@ export interface EmbeddingDirection {
   directionStartIndex: number,
   directionEndIndex: number,
   filePath: string,
+  hasEmbeddedExample: boolean,
+  embeddedExampleStartIndex: number,
+  embeddedExampleEndIndex: number,
 }
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
-  const regExp = /<!-- *embed-examples: *(.+?) *-->/g;
+  const regExp = /<!-- *embed-examples: *(.+?) *-->(```(.+?)```)?/g;
   const directions = [];
   let matched;
   while (matched = regExp.exec(readmeText)) {
+    const directionEndIndex = regExp.lastIndex - 1;
+    const embeddedExample = matched[2] || '';
+    const hasEmbeddedExample = Boolean(embeddedExample);
+    const embeddedExampleStartIndex = hasEmbeddedExample ? directionEndIndex + 1 : 0;
+    const embeddedExampleEndIndex = hasEmbeddedExample ? embeddedExampleStartIndex + embeddedExample.length - 1 : 0;
+
     directions.push({
       directionStartIndex: matched.index,
-      directionEndIndex: regExp.lastIndex - 1,
+      directionEndIndex,
       filePath: matched[1],
+      hasEmbeddedExample,
+      embeddedExampleStartIndex,
+      embeddedExampleEndIndex,
     });
   }
   return directions;
