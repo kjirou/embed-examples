@@ -13,29 +13,71 @@ if (fs.existsSync(path.join(__dirname, '../dist/index.js'))) {
   embedExamples = require('../src');
 }
 
+function exitWithErrorMessage(message) {
+  const ansiEscapeColorRed = '\x1b[31m';
+  const ansiEscapeColorReset = '\x1b[0m';
+  process.stderr.write(`${ansiEscapeColorRed}${message}${ansiEscapeColorReset}\n`);
+  process.exit(1);
+}
+
 const cwd = process.cwd();
 
 const parsedArgv = minimist(process.argv.slice(2), {
+  boolean: [
+    'overwrite',
+  ],
+  string: [
+    'examples-dir',
+    'replacement',
+  ],
   default: {
-    'examples-dir': null,
+    'examples-dir': '',
+    overwrite: false,
+    replacement: '',
   },
   alias: {
     e: 'examples-dir',
+    o: 'overwrite',
+    r: 'replacement',
   },
 });
 const [
-  moduleName = '',
-  mainModuleIdUsedInExample = '',
   relativeReadmeFilePath = '',
 ] = parsedArgv._;
 
-// TODO: Validate args
+if (!relativeReadmeFilePath) {
+  exitWithErrorMessage('The path of "README.md" is necessary.');
+}
 
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
 const readmeText = fs.readFileSync(readmeFilePath).toString();
 
 const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
 
-const output = embedExamples.execute(readmeText, moduleName, mainModuleIdUsedInExample, examplesDirPath);
+const replacementQueries = parsedArgv.replacement instanceof Array
+  ? parsedArgv.replacement
+  : parsedArgv.replacement !== ''
+    ? [parsedArgv.replacement]
+    : [];
+const replacementKeywords = replacementQueries.map(replacementQuery => {
+  const [from, to] = replacementQuery.split(',');
+  if (!from || typeof to !== 'string') {
+    exitWithErrorMessage('The "--replacement" option requires a value like "--replacement from,to".');
+  }
+  return {
+    from,
+    to,
+  };
+});
+
+parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
+  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
+
+const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords);
+
+if (parsedArgv.overwrite) {
+  fs.writeFileSync(readmeFilePath, output);
+}
+
 process.stdout.write(output);
 process.exit();

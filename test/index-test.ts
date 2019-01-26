@@ -12,24 +12,7 @@ describe('index', function() {
       describe('When there is one direction', function() {
         it('can embed an example', function() {
           assert.strictEqual(
-            execute('<!-- embed-examples: foo.js -->', 'my-module', '../index', examplesDirPath),
-            [
-              "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
-              "const foo = require('my-module');",
-              "```<!-- /embedded-example -->",
-            ].join('\n')
-          );
-        });
-
-        it('should not change when replacing continuously', function() {
-          const first = execute('<!-- embed-examples: foo.js -->', 'my-module', '../index', examplesDirPath);
-          const second = execute(first, 'my-module', '../index', examplesDirPath);
-          assert.strictEqual(first, second);
-        });
-
-        it('can not replace to module-name when the passed main-module-id does not exist', function() {
-          assert.strictEqual(
-            execute('<!-- embed-examples: foo.js -->', 'my-module', '../not-exist', examplesDirPath),
+            execute('<!-- embed-examples: foo.js -->', examplesDirPath, []),
             [
               "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
               "const foo = require('../index');",
@@ -38,13 +21,22 @@ describe('index', function() {
           );
         });
 
-        it('should not replace no quote strings as main-module-id', function() {
+        it('should not change when replacing continuously', function() {
+          const first = execute('<!-- embed-examples: foo.js -->', examplesDirPath, []);
+          const second = execute(first, examplesDirPath, []);
+          assert.strictEqual(first, second);
+        });
+
+        it('can replace keywords', function() {
           assert.strictEqual(
-            execute('<!-- embed-examples: no-quote-strings.js -->', 'my-module', '../index', examplesDirPath),
+            execute(
+              '<!-- embed-examples: foo.js -->',
+              examplesDirPath,
+              [{from: '../index', to: 'foo'}]
+            ),
             [
-              "<!-- embed-examples: no-quote-strings.js --><!-- embedded-example -->```",
-              "const noQuoteStrings = require('my-module');",
-              "const x = ' ../index ';",
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
+              "const foo = require('foo');",
               "```<!-- /embedded-example -->",
             ].join('\n')
           );
@@ -56,15 +48,14 @@ describe('index', function() {
           assert.strictEqual(
             execute(
               '<!-- embed-examples: foo.js --><!-- embed-examples: bar.js -->',
-              'my-module',
-              '../index',
-              examplesDirPath
+              examplesDirPath,
+              []
             ),
             [
               "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
-              "const foo = require('my-module');",
+              "const foo = require('../index');",
               "```<!-- /embedded-example --><!-- embed-examples: bar.js --><!-- embedded-example -->```",
-              "import bar from \"my-module\";",
+              "import bar from \"../index\";",
               "```<!-- /embedded-example -->",
             ].join('\n')
           );
@@ -76,7 +67,7 @@ describe('index', function() {
       describe('When there are no directions', function() {
         it('should not replace the text', function() {
           const text = '# h1'
-          assert.strictEqual(execute(text, 'my-module', '../index.js', examplesDirPath), text);
+          assert.strictEqual(execute(text, examplesDirPath, []), text);
         });
       });
 
@@ -84,14 +75,14 @@ describe('index', function() {
         describe('When "embed-examples:" does not exist', function() {
           it('should not replace the text', function() {
             const text = '<!-- foo.js -->';
-            assert.strictEqual(execute(text, 'my-module', '../index.js', examplesDirPath), text);
+            assert.strictEqual(execute(text, examplesDirPath, []), text);
           });
         });
 
         describe('When describing an example that does not exist', function() {
           it('should not replace the text', function() {
             const text = '<!-- embed-example: fooo.js -->';
-            assert.strictEqual(execute(text, 'my-module', '../index.js', examplesDirPath), text);
+            assert.strictEqual(execute(text, examplesDirPath, []), text);
           });
         });
       });
