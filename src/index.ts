@@ -3,7 +3,12 @@ export interface ExecutionResult {
   outputErrorMessage: string,
 }
 
-export function execute(moduleName: string, inputDir: string, outputFile: string): Promise<ExecutionResult> {
+export function execute(
+  moduleName: string,
+  mainModuleIdUsedInExample: string,
+  inputDirPath: string,
+  outputFilePath: string
+): Promise<ExecutionResult> {
   return Promise.resolve()
     .then(() => {
       if (moduleName === 'e') {

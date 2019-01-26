@@ -18,6 +18,7 @@ const cwd = process.cwd();
 const parsedArgv = minimist(process.argv.slice(2));
 const [
   moduleName = '',
+  mainModuleIdUsedInExample = '',
   relativeInputDirPath = '',
   relativeOutputFilePath = '',
 ] = parsedArgv._;
@@ -27,7 +28,7 @@ const [
 const inputDirPath = path.join(cwd, relativeInputDirPath);
 const outputFilePath = path.join(cwd, relativeOutputFilePath);
 
-embedExamples.execute(moduleName, inputDirPath, outputFilePath)
+embedExamples.execute(moduleName, mainModuleIdUsedInExample, inputDirPath, outputFilePath)
   .then(results => {
     if (results.exitCode > 0) {
       process.stdout.write(`${results.outputErrorMessage}\n`);
