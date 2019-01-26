@@ -1,2 +1,4 @@
-const x: number = 1;
-console.log(x);
+export const dummy = () => {
+  const x: number = 1;
+  console.log(x);
+}

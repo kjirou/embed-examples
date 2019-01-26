@@ -21,6 +21,9 @@
     "url": "https://github.com/kjirou/embed-examples/issues"
   },
   "homepage": "https://github.com/kjirou/embed-examples#readme",
+  "bin": {
+    "embed-examples": "bin/cli.js"
+  },
   "devDependencies": {
     "ts-node": "^8.0.2",
     "typescript": "^3.2.4"
