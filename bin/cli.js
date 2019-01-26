@@ -26,9 +26,9 @@ const parsedArgv = minimist(process.argv.slice(2), {
   },
 });
 const [
+  relativeReadmeFilePath = '',
   moduleName = '',
   mainModuleIdUsedInExample = '',
-  relativeReadmeFilePath = '',
 ] = parsedArgv._;
 
 // TODO: Validate args
