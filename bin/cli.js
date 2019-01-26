@@ -23,10 +23,17 @@ function exitWithErrorMessage(message) {
 const cwd = process.cwd();
 
 const parsedArgv = minimist(process.argv.slice(2), {
+  boolean: [
+    'overwrite',
+  ],
+  string: [
+    'examples-dir',
+    'replacement',
+  ],
   default: {
-    'examples-dir': null,
+    'examples-dir': '',
     overwrite: false,
-    replacement: null,
+    replacement: '',
   },
   alias: {
     e: 'examples-dir',
@@ -45,12 +52,11 @@ if (!relativeReadmeFilePath) {
 const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
 const readmeText = fs.readFileSync(readmeFilePath).toString();
 
-const examplesDirPath = parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
-  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
+const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
 
 const replacementQueries = parsedArgv.replacement instanceof Array
   ? parsedArgv.replacement
-  : typeof parsedArgv.replacement === 'string'
+  : parsedArgv.replacement !== ''
     ? [parsedArgv.replacement]
     : [];
 const replacementKeywords = replacementQueries.map(replacementQuery => {
