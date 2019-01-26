@@ -13,6 +13,11 @@ if (fs.existsSync(path.join(__dirname, '../dist/index.js'))) {
   embedExamples = require('../src');
 }
 
+function exitWithErrorMessage(message) {
+  process.stderr.write(message + '\n');
+  process.exit(1);
+}
+
 const cwd = process.cwd();
 
 const parsedArgv = minimist(process.argv.slice(2), {
@@ -45,8 +50,10 @@ const replacementQueries = parsedArgv.replacement instanceof Array
     ? [parsedArgv.replacement]
     : [];
 const replacementKeywords = replacementQueries.map(replacementQuery => {
-  // TODO: Validate "from,to" format
   const [from, to] = replacementQuery.split(',');
+  if (!from || typeof to !== 'string') {
+    exitWithErrorMessage('The "--replacement" option requires a value like "--replacement from,to".');
+  }
   return {
     from,
     to,
