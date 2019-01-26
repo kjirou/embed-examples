@@ -3,7 +3,6 @@ const path = require('path');
 
 //
 // TODO:
-// - `--overwrite` option
 // - `--newline-character` option
 //
 

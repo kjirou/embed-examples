@@ -18,9 +18,11 @@ const cwd = process.cwd();
 const parsedArgv = minimist(process.argv.slice(2), {
   default: {
     'examples-dir': null,
+    overwrite: false,
   },
   alias: {
     e: 'examples-dir',
+    o: 'overwrite',
   },
 });
 const [
@@ -38,5 +40,10 @@ const examplesDirPath = parsedArgv['examples-dir'] && typeof parsedArgv['example
   ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
 
 const output = embedExamples.execute(readmeText, moduleName, mainModuleIdUsedInExample, examplesDirPath);
+
+if (parsedArgv.overwrite) {
+  fs.writeFileSync(readmeFilePath, output);
+}
+
 process.stdout.write(output);
 process.exit();
