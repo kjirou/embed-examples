@@ -13,11 +13,9 @@
     "strict": true,
     /* Additional Checks */
     "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true
-    // TODO: Disable until the first implementation
-    //"noUnusedLocals": true,
-    // TODO: Disable until the first implementation
-    //"noUnusedParameters": true
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": [
     "../src"
