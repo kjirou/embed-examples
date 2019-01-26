@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "$(npm bin)/tsc --project ./tsconfigs/build.json",
-    "test": "$(npm bin)/mocha --require './setup/ts-node-reigister-for-test.js' './test/**/*.ts'"
+    "test": "$(npm bin)/mocha --require './setup/ts-node-reigister-for-test.js' './test/**/*.ts'",
+    "typecheck": "$(npm bin)/tsc --project ./tsconfigs/test.json"
   },
   "repository": {
     "type": "git",
