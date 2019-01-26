@@ -28,15 +28,18 @@ const parsedArgv = minimist(process.argv.slice(2), {
   ],
   string: [
     'examples-dir',
+    'newline-character',
     'replacement',
   ],
   default: {
     'examples-dir': '',
+    'newline-character': 'LF',
     overwrite: false,
     replacement: '',
   },
   alias: {
     e: 'examples-dir',
+    n: 'newline-character',
     o: 'overwrite',
     r: 'replacement',
   },
@@ -70,10 +73,12 @@ const replacementKeywords = replacementQueries.map(replacementQuery => {
   };
 });
 
-parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
-  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
+const newlineCharacter = parsedArgv['newline-character'];
+if (['LF', 'CR', 'CRLF'].indexOf(newlineCharacter) === -1) {
+  exitWithErrorMessage('The "--newline-character" option requires one of ["LF", "CR", "CRLF"].');
+}
 
-const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords);
+const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords, newlineCharacter);
 
 if (parsedArgv.overwrite) {
   fs.writeFileSync(readmeFilePath, output);

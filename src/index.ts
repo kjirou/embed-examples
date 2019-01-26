@@ -1,10 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
-//
-// TODO:
-// - `--newline-character` option
-//
+import * as fs from 'fs';
+import * as path from 'path';
 
 const EMBEDDED_EXAMPLE_START_TAG = '<!-- embedded-example -->';
 const EMBEDDED_EXAMPLE_END_TAG = '<!-- /embedded-example -->';
@@ -85,14 +80,20 @@ function embedExamplesIntoReadme(
   readmeText: string,
   directions: EmbeddingDirection[],
   examples: ExampleSourcesMap,
+  newlineCharacter: 'LF' | 'CR' | 'CRLF',
 ): string {
   const directionsOrderdFromTail =
     directions.slice().sort((a, b) => b.directionStartIndex - a.directionStartIndex);
+  const newlineCharacterText = {
+    LF: '\n',
+    CR: '\r',
+    CRLF: '\r\n',
+  }[newlineCharacter];
   let newReadmeText = readmeText;
   directionsOrderdFromTail.forEach(direction => {
     newReadmeText = newReadmeText.slice(0, direction.directionStartIndex) +
       direction.directionBody +
-      EMBEDDED_EXAMPLE_START_TAG + '```\n' + examples[direction.filePath] + '```' + EMBEDDED_EXAMPLE_END_TAG +
+      EMBEDDED_EXAMPLE_START_TAG + '```' + newlineCharacterText + examples[direction.filePath] + '```' + EMBEDDED_EXAMPLE_END_TAG +
       newReadmeText.slice(direction.directionEndIndex + 1);
   });
   return newReadmeText;
@@ -102,11 +103,12 @@ export function execute(
   readmeText: string,
   examplesDirPath: string,
   replacementKeywords: ReplacementKeyword[],
+  newlineCharacter: 'LF' | 'CR' | 'CRLF',
 ): string {
   const directions = searchEmbeddingDirections(readmeText);
   const exampleSourcesMap = replaceKeywords(
     fetchExamples(examplesDirPath, directions),
     replacementKeywords
   );
-  return embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap);
+  return embedExamplesIntoReadme(readmeText, directions, exampleSourcesMap, newlineCharacter);
 };
