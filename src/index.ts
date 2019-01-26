@@ -54,6 +54,32 @@ function fetchExamples(basePath: string, directions: EmbeddingDirection[]): Exam
   return examples;
 }
 
+/**
+ * Copied from: https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_Expressions
+ */
+function escapeRegExp(input: string): string {
+  return input.replace(/[.*+?^=!:${}()|[\]\/\\]/g, '\\$&');
+}
+
+function replaceToPublicModuleId(
+  examples: ExampleSourceMap,
+  mainModuleIdUsedInExample: string,
+  moduleName: string
+): ExampleSourceMap {
+  Object.keys(examples).forEach(key => {
+    ["'", '"', '`'].forEach(quote => {
+      examples[key] = examples[key].replace(
+        new RegExp(
+          `${quote}${escapeRegExp(mainModuleIdUsedInExample)}${quote}`,
+          'g'
+        ),
+        `${quote}${moduleName}${quote}`
+      );
+    });
+  });
+  return examples;
+}
+
 export interface ExecutionResult {
   exitCode: number,
   outputErrorMessage: string,
@@ -69,7 +95,11 @@ export function execute(
   // TODO: Handle a failure to read
   const reversedDirections = searchEmbeddingDirections(readmeText).reverse();
   console.log(reversedDirections);
-  const exampleSourceMap = fetchExamples(examplesDirPath, reversedDirections);
+  const exampleSourceMap = replaceToPublicModuleId(
+    fetchExamples(examplesDirPath, reversedDirections),
+    mainModuleIdUsedInExample,
+    moduleName
+  );
   console.log(exampleSourceMap);
 
   return Promise.resolve()

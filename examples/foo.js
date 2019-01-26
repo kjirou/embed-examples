@@ -1,3 +1,3 @@
-const embedExamples = require('../dist/index');
+const embedExamples = require("../dist/index");
 
 // foo.js
