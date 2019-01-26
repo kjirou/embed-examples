@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 // 1) READMEからクエリを探す
 // 2) 要求するファイルパスリストを生成
@@ -54,6 +55,17 @@ export function execute(
   // TODO: Handle a failure to read
   const directions = searchEmbeddingDirections(readmeText);
   console.log(directions);
+
+  const examples = directions.slice().reverse().map(direction => {
+    const absoluteFilePath = path.join(path.dirname(readmeFilePath), direction.filePath);
+    const source = fs.readFileSync(absoluteFilePath).toString();
+    // TODO: Handle a failure to read
+    return {
+      filePath: direction.filePath,
+      source,
+    };
+  });
+  console.log(examples);
 
   return Promise.resolve()
     .then(() => {
