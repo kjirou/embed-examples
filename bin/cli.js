@@ -12,4 +12,4 @@ if (fs.existsSync(path.join(__dirname, '../dist/index.js'))) {
   embedExamples = require('../src');
 }
 
-embedExamples.dummy();
+console.log(embedExamples.dummy());
