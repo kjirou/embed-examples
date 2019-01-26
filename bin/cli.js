@@ -35,10 +35,10 @@ const readmeFilePath = path.join(cwd, relativeReadmeFilePath);
 
 const examplesDirPath = parsedArgv['examples-dir'] || path.dirname(readmeFilePath);
 
-embedExamples.execute(moduleName, mainModuleIdUsedInExample, readmeFilePath, examplesDirPath)
-  .then(results => {
-    if (results.exitCode > 0) {
-      process.stdout.write(`${results.outputErrorMessage}\n`);
-    }
-    process.exit(results.exitCode)
-  });
+const result = embedExamples.execute(moduleName, mainModuleIdUsedInExample, readmeFilePath, examplesDirPath);
+if (result.exitCode > 0) {
+  process.stderr.write(`${result.outputErrorMessage}\n`);
+} else {
+  process.stdout.write(result.output);
+}
+process.exit(result.exitCode);

@@ -89,6 +89,7 @@ function embedExamplesIntoReadme(
 
 export interface ExecutionResult {
   exitCode: number,
+  output: string,
   outputErrorMessage: string,
 }
 
@@ -97,7 +98,7 @@ export function execute(
   mainModuleIdUsedInExample: string,
   readmeFilePath: string,
   examplesDirPath: string
-): Promise<ExecutionResult> {
+): ExecutionResult {
   const readmeText = fs.readFileSync(readmeFilePath).toString();
   // TODO: Handle a failure to read
   const directions = searchEmbeddingDirections(readmeText);
@@ -107,20 +108,9 @@ export function execute(
     moduleName
   );
   const embeddedReadmeText = embedExamplesIntoReadme(readmeText, directions, exampleSourceMap);
-  console.log(embeddedReadmeText);
-
-  return Promise.resolve()
-    .then(() => {
-      if (moduleName === 'e') {
-        return {
-          exitCode: 1,
-          outputErrorMessage: 'ERROR!',
-        };
-      } else {
-        return {
-          exitCode: 0,
-          outputErrorMessage: '',
-        };
-      }
-    });
+  return {
+    exitCode: 0,
+    output: embeddedReadmeText,
+    outputErrorMessage: '',
+  };
 };
