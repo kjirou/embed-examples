@@ -25,6 +25,8 @@
     "embed-examples": "bin/cli.js"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "mocha": "^5.2.0",
     "ts-node": "^8.0.2",
     "typescript": "^3.2.4"
   }
