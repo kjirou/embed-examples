@@ -28,15 +28,18 @@ const parsedArgv = minimist(process.argv.slice(2), {
   ],
   string: [
     'examples-dir',
+    'newline-character',
     'replacement',
   ],
   default: {
     'examples-dir': '',
+    'newline-character': 'LF',
     overwrite: false,
     replacement: '',
   },
   alias: {
     e: 'examples-dir',
+    n: 'newline-character',
     o: 'overwrite',
     r: 'replacement',
   },
@@ -69,9 +72,6 @@ const replacementKeywords = replacementQueries.map(replacementQuery => {
     to,
   };
 });
-
-parsedArgv['examples-dir'] && typeof parsedArgv['examples-dir'] === 'string'
-  ? parsedArgv['examples-dir'] : path.dirname(readmeFilePath);
 
 const output = embedExamples.execute(readmeText, examplesDirPath, replacementKeywords);
 
