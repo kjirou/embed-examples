@@ -1,0 +1,23 @@
+{
+  "name": "embed-examples",
+  "version": "0.0.0",
+  "description": "Embed examples/*.js into the README.md",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjirou/embed-examples.git"
+  },
+  "keywords": [
+    "development",
+    "tool"
+  ],
+  "author": "kjirou",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kjirou/embed-examples/issues"
+  },
+  "homepage": "https://github.com/kjirou/embed-examples#readme"
+}
