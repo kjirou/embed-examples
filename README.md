@@ -42,8 +42,7 @@ README.md is updated as follows!
 `my-lib/README.md`)
 ````
 # my-lib
-<!-- embed-examples: examples/foo.js -->
-<!-- embed-example -->
+<!-- embed-examples: examples/foo.js --><!-- embed-example -->
 ```
 const myLib = require('my-lib');
 myLib.doSomething();
