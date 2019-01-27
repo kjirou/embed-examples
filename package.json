@@ -1,11 +1,12 @@
 {
   "name": "embed-examples",
-  "version": "0.0.0",
-  "description": "Embed examples/*.js into the README.md",
+  "version": "1.0.0",
+  "description": "Embed examples into README.md",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "$(npm bin)/tsc --project ./tsconfigs/build.json",
+    "build-and-publish": "rm -rf ./dist && npm run build && npm publish",
     "test": "$(npm bin)/mocha --require './setup/ts-node-reigister-for-test.js' './test/**/*-test.ts'",
     "typecheck": "$(npm bin)/tsc --project ./tsconfigs/test.json"
   },
@@ -23,6 +24,16 @@
     "url": "https://github.com/kjirou/embed-examples/issues"
   },
   "homepage": "https://github.com/kjirou/embed-examples#readme",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "bin",
+    "dist",
+    "examples",
+    "setup",
+    "package.json",
+    "package-lock.json"
+  ],
   "bin": {
     "embed-examples": "bin/cli.js"
   },
