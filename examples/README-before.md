@@ -1,6 +1,6 @@
 # Embedding example
 
-It is the result of executing the following command.
+[README-after.md](/examples/README-after.md) is the result of executing the following command.
 
 ```bash
 embed-examples examples/README-before.md > examples/README-after.md
