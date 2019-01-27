@@ -1,5 +1,6 @@
 # embed-examples
 
+[![npm version](https://badge.fury.io/js/embed-examples.svg)](https://badge.fury.io/js/embed-examples)
 [![Build Status](https://travis-ci.org/kjirou/embed-examples.svg?branch=master)](https://travis-ci.org/kjirou/embed-examples)
 
 Embed examples into README.md
