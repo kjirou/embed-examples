@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-
-// TODO: I can't read "typings/declarations.d.ts" by tsconfig's "typeRoots" setting
-const remark = require('remark');
+import * as remark from 'remark';
 
 const EMBEDDED_EXAMPLE_START_TAG = '<!-- embedded-example -->';
 const EMBEDDED_EXAMPLE_END_TAG = '<!-- /embedded-example -->';
