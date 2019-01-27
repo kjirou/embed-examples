@@ -9,6 +9,11 @@
     // TODO: Not working?
     "newLine": "LF",
     "target": "es5",
+    // TODO: I can't read "typings/declarations.d.ts" by tsconfig's "typeRoots" setting
+    "typeRoots": [
+      "../node_modules/@types",
+      "../typings"
+    ],
     /* Strict Type-Checking Options */
     "strict": true,
     /* Additional Checks */
