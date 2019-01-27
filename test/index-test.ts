@@ -14,9 +14,11 @@ describe('index', function() {
           assert.strictEqual(
             execute('<!-- embed-examples: foo.js -->', examplesDirPath, [], 'LF'),
             [
-              "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->",
+              "```",
               "const foo = require('../index');",
-              "```<!-- /embedded-example -->",
+              "```",
+              "<!-- /embedded-example -->",
             ].join('\n')
           );
         });
@@ -36,9 +38,11 @@ describe('index', function() {
               'LF'
             ),
             [
-              "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->",
+              "```",
               "const foo = require('foo');",
-              "```<!-- /embedded-example -->",
+              "```",
+              "<!-- /embedded-example -->",
             ].join('\n')
           );
         });
@@ -52,9 +56,11 @@ describe('index', function() {
               'CR'
             ),
             [
-              "<!-- embed-examples: foo.js --><!-- embedded-example -->```\r",
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->\r",
+              "```\r",
               "const foo = require('../index');\n",
-              "```<!-- /embedded-example -->",
+              "```\r",
+              "<!-- /embedded-example -->",
             ].join('')
           );
         });
@@ -70,11 +76,15 @@ describe('index', function() {
               'LF'
             ),
             [
-              "<!-- embed-examples: foo.js --><!-- embedded-example -->```",
+              "<!-- embed-examples: foo.js --><!-- embedded-example -->",
+              "```",
               "const foo = require('../index');",
-              "```<!-- /embedded-example --><!-- embed-examples: bar.js --><!-- embedded-example -->```",
+              "```",
+              "<!-- /embedded-example --><!-- embed-examples: bar.js --><!-- embedded-example -->",
+              "```",
               "import bar from \"../index\";",
-              "```<!-- /embedded-example -->",
+              "```",
+              "<!-- /embedded-example -->",
             ].join('\n')
           );
         });
