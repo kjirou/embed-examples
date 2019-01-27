@@ -15,7 +15,7 @@ interface RemarkAstNode {
       offset: number,
     },
   },
-  children: RemarkAstNode[],
+  children?: RemarkAstNode[],
 }
 
 declare module 'remark' {

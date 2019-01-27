@@ -30,6 +30,60 @@ interface EmbeddingDirection {
 };
 
 function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
+  //const regExp = new RegExp(
+  //  [
+  //    '(<!-- *embed-examples: *(.+?) *-->)',
+  //    '(?:',
+  //    escapeRegExp(EMBEDDED_EXAMPLE_START_TAG) + '(?:\r\n|[\n\r])',
+  //    '```(?:\r\n|[\n\r]|.)+?```(?:\r\n|[\n\r])',
+  //    escapeRegExp(EMBEDDED_EXAMPLE_END_TAG),
+  //    ')?',
+  //  ].join(''),
+  //  'g'
+  //);
+  //const directions = [];
+  //let matched;
+  //while (matched = regExp.exec(readmeText)) {
+  //  directions.push({
+  //    directionStartIndex: matched.index,
+  //    directionEndIndex: regExp.lastIndex - 1,
+  //    directionBody: matched[1],
+  //    filePath: matched[2],
+  //  });
+  //}
+
+  const directions = [];
+
+  function walkAst(
+    astNode: RemarkAstNode,
+    parentAstNode: RemarkAstNode | null,
+    callback: (astNode: RemarkAstNode, parentAstNode: RemarkAstNode | null) => void
+  ) {
+    callback(RemarkAstNode, parentAstNode);
+    (astNode.children || []).forEach(astNode_ => {
+      walkAst(astNode_, astNode, callback);
+    });
+  }
+
+  const ast: RemarkAstNode = remark.parse(readmeText);
+
+  walkAst(
+    ast,
+    null,
+    (astNode, parentAstNode) => {
+      if (
+        astNode.type === 'html' &&
+        /<!-- *embed-examples: *(.+?) *-->/.test(astNode.value)
+      ) {
+        const siblings
+        if (
+        ) {
+        } else {
+        }
+      }
+    }
+  );
+
   const regExp = new RegExp(
     [
       '(<!-- *embed-examples: *(.+?) *-->)',
@@ -41,16 +95,7 @@ function searchEmbeddingDirections(readmeText: string): EmbeddingDirection[] {
     ].join(''),
     'g'
   );
-  const directions = [];
-  let matched;
-  while (matched = regExp.exec(readmeText)) {
-    directions.push({
-      directionStartIndex: matched.index,
-      directionEndIndex: regExp.lastIndex - 1,
-      directionBody: matched[1],
-      filePath: matched[2],
-    });
-  }
+
   return directions;
 }
 
